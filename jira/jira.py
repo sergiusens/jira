@@ -12,8 +12,13 @@ class BasicAuth:
         return self._cookies
 
 class Jira:
+    """Jira class to interact with Atlassian's issue tracker."""
+
+    __name__ = 'Jira'
     def __init__(self, base_uri=None, api='latest',
                  credentials=None, verify=True):
+        """Generic initialization, generally not called directly."""
+
         self._base_uri = base_uri
         self._api = api
         self._verify = verify
@@ -39,8 +44,19 @@ class Jira:
     def login_basic_auth(cls, base_uri=None, api='latest',
                          user=None, password=None,
                          verify=True):
+        """
+        Basic authentication login mechanism sending user
+        and password.
+
+        Keyword arguments:
+        user: user to login with (default None)
+        password -- associated password the user has (default None)
+        verify -- when using https, verifies certs (default True)
+        base_uri -- Jira base uri to connecto to (default None)
+        api -- Jira API version to use (default 'latest')
+
+        """
         auth_uri = base_uri + '/rest/auth/latest/session'
-        print auth_uri
         auth = requests.auth.HTTPBasicAuth(user, password)
         response = requests.get(auth_uri, auth=auth, verify=verify)
         credentials = None
@@ -51,21 +67,24 @@ class Jira:
         return cls(base_uri, api, credentials, verify)
 
     def search(self, **kwargs):
+        """Generic Jira searching mechanism layering jql."""
         search_uri = self._build_uri(**kwargs)
         
         cookies = None
         if isinstance(self._credentials, BasicAuth):
             cookies = self._credentials.cookies
 
-        return simplejson.dumps(requests.get(search_uri,
+        return simplejson.loads(requests.get(search_uri,
                                              cookies=cookies,
                                              verify=self._verify).content)
 
     @property
     def assigned_to_me(self):
+        """ Search for issues assigned to logged in user."""
         return self.search(search_type='assignee', user='currentUser()')
 
     @property
     def reported_by_me(self):
+        """ Search for issues reported by logged user."""
         return self.search(search_type='assignee', user='currentUser()')
         
