@@ -7,7 +7,7 @@ requests
 
 """
 
-__name__ = 'Jira'
+__name__ = 'jira'
 __version__ = '0.1'
 __author__ = 'Sergio Schvezov'
 
