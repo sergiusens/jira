@@ -49,7 +49,7 @@ class Jira:
         and password.
 
         Keyword arguments:
-        user: user to login with (default None)
+        user -- user to login with (default None)
         password -- associated password the user has (default None)
         verify -- when using https, verifies certs (default True)
         base_uri -- Jira base uri to connecto to (default None)
